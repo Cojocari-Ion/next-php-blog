@@ -6,6 +6,8 @@ require "server/services/DB.php";
 
 use services\DB;
 
+require('controllers/PostsControllers.php');
+
 // Getting current URL
 
 $current_link = $_SERVER['REQUEST_URI'];

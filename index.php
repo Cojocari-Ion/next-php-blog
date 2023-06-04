@@ -10,4 +10,4 @@ use Server\Controllers\PostsControllers;
 use services\DB;
 
 // var_dump(new DB());
-(new PostsControllers)->getPosts();ASD
+(new PostsControllers)->getPosts();

@@ -98,4 +98,74 @@ class PostsControllers
 
         mysqli_close($this->conn);
     }
+
+    public function getPostsFromDatabase()
+    {
+        try {
+
+            header("Access-Control-Allow-Origin: *");
+
+            header("Access-Control-Allow-Headers: *");
+
+            // Rest of your PHP code...
+
+
+            $perPage = $_GET['limit'] ?? 5;
+            $pageNumber = $_GET['offset'] ?? 0;
+            $postsArray = [];
+
+            $sql = "SELECT  * FROM posts";
+            $totalPosts = mysqli_num_rows(mysqli_query($this->conn, $sql));
+
+
+            $sql = "SELECT * FROM posts ORDER BY id LIMIT $perPage OFFSET $pageNumber";
+            $response = mysqli_query($this->conn, $sql);
+
+            if ($response) {
+                while ($row = mysqli_fetch_assoc($response)) {
+                    $postsArray['posts'][] = $row;
+                }
+            } else {
+                echo "Error" . mysqli_error($this->conn);
+            }
+
+            $postsArray['count'] = $totalPosts;
+            mysqli_close($this->conn);
+
+            echo json_encode($postsArray, JSON_PRETTY_PRINT);
+            // return json_encode($postsArray, JSON_PRETTY_PRINT);
+            exit;
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
+    }
+
+    public function getSearchResult()
+    {
+        try {
+
+            header("Access-Control-Allow-Origin: *");
+
+            header("Access-Control-Allow-Headers: *");
+
+            $postsArray = [];
+            $keyword = $_GET['keyword'] ?? null;
+
+            if ($keyword) {
+                $sql = "SELECT id,title FROM posts WHERE title LIKE '% $keyword%' LIMIT 5";
+                $response = mysqli_query($this->conn, $sql);
+
+                if ($response) {
+                    while ($row = mysqli_fetch_assoc($response)) {
+                        $postsArray['posts'][] = $row;
+                    }
+                }
+            }
+
+            echo json_encode($postsArray, JSON_PRETTY_PRINT);
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            exit;
+        }
+    }
 }

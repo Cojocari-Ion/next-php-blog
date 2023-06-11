@@ -5,6 +5,7 @@
 require "services/DB.php";
 require('Api.php');
 require('controllers/PostsControllers.php');
+require('controllers/AuthControllers.php');
 
 use services\DB;
 use Api\Api;
@@ -22,7 +23,8 @@ if (str_contains($current_link, '?')) {
 
 $urls = [
     '/next-php-blog/server/posts' => ['PostsControllers@getPostsFromDatabase'],
-    '/next-php-blog/server/searchResult' => ['PostsControllers@getSearchResult']
+    '/next-php-blog/server/searchResult' => ['PostsControllers@getSearchResult'],
+    '/next-php-blog/server/auth' => ['AuthControllers@auth'],
 ];
 
 // CHeck route availability

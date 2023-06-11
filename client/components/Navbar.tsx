@@ -11,7 +11,7 @@ const Navbar = (props: Props) => {
 
   const fetchSearchResult = async () => {
     const res = await fetch(
-      `http://localhost/next-php-blog/server/searchResult?keyword=${searchTerm}`,
+      `http://localhost/next-php-blog/server/searchResult?keyword=vero`,
       {
         method: "POST",
         headers: {
@@ -21,7 +21,10 @@ const Navbar = (props: Props) => {
       }
     );
 
-    return await res.json();
+    const response = await res.json();
+    console.log(response);
+
+    return await response;
   };
 
   return (
@@ -37,10 +40,15 @@ const Navbar = (props: Props) => {
 
       <div className={styles.searchContainer}>
         <input type="Search post" />
-        <div className={styles.searchContainer__svgContainer}>
+        <div
+          onClick={() => fetchSearchResult()}
+          className={styles.searchContainer__svgContainer}
+        >
           <BiSearch />
         </div>
       </div>
+
+      <div hidden className={styles.resultsContainer}></div>
     </div>
   );
 };

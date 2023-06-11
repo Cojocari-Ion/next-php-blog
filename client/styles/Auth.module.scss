@@ -1,0 +1,28 @@
+@import "variables";
+
+.page {
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .container {
+        width: 600px;
+        padding: 30px;
+        @include shadedContainer;
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            &__input {
+                @include bordered;
+            }
+
+            &__button {
+                @include bordered;
+            }
+            
+        }
+    }
+}

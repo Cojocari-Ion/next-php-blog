@@ -1,0 +1,15 @@
+
+@mixin shadedContainer {
+    border-radius: 10px;
+    border: 2px solid #000;
+    -webkit-box-shadow: -5px 5px 0px 0px #000000; 
+    box-shadow: -5px 5px 0px 0px #000000;
+}
+
+@mixin bordered {
+    background: none;
+    border-radius: 10px;
+    border: 2px solid #000;
+    padding: 10px 20px;
+    font-size: 20px;
+}

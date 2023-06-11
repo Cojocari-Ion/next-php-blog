@@ -1,3 +1,5 @@
+@import "variables";
+
 .posts {
     width: 100%;
     padding: 0 70px;
@@ -17,9 +19,7 @@
             .card {
                 padding: 30px;
                 border-radius: 10px;
-                border: 2px solid #000;
-                -webkit-box-shadow: -5px 5px 0px 0px #000000; 
-                box-shadow: -5px 5px 0px 0px #000000;
+                @include shadedContainer;
 
                 &__imgContainer{
                     width: 100%;
@@ -36,11 +36,6 @@
                     font-size: 30px;
                 }
             }
-            
-        }
-
-        .left {
-
         }
     }
 

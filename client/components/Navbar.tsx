@@ -36,6 +36,12 @@ const Navbar = (props: Props) => {
         <div className={styles.menu__link}>
           <Link href={"/contact"}>Contact</Link>
         </div>
+        <div className={styles.menu__link}>
+          <Link href={"/auth"}>Auth</Link>
+        </div>
+        <div className={styles.menu__link}>
+          <Link href={"/counter"}>Counter</Link>
+        </div>
       </div>
 
       <div className={styles.searchContainer}>

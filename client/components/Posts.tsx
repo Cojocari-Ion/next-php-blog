@@ -9,16 +9,16 @@ const Posts = (props: Props) => {
   const [pages, setPages] = useState<Array<number>>([]);
 
   useEffect(() => {
-    const getPosts = async () => {
+    const getPosts = async (limit?: number, offset?: number) => {
       const res = await fetch(
-        "http://localhost/next-php-blog/server/posts?limit=20&offset=10",
+        `http://localhost/next-php-blog/server/controllers/getPosts.php?limit=10&offset=20`,
         {
           method: "GET",
         }
       );
 
       const body = await res.json();
-      //   console.log(body);
+      // console.log(body.posts);
 
       let numbers = [];
 

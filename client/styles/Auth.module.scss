@@ -21,6 +21,8 @@
 
             &__button {
                 @include bordered;
+
+                cursor: pointer;
             }
             
         }

@@ -9,34 +9,31 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const email = "CUcurucu";
-        const password = "mucupucu";
-        const response = await fetch(
-          "http://localhost/next-php-blog/server/auth",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log(data.message); // User created successfully
-        } else {
-          console.log("Failed to create user:", data.message);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    getUsers();
+    // const getUsers = async () => {
+    //   try {
+    //     const email = "CUcurucu";
+    //     const password = "mucupucu";
+    //     const response = await fetch(
+    //       "http://localhost/next-php-blog/server/auth",
+    //       {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({ email, password }),
+    //       }
+    //     );
+    //     const data = await response.json();
+    //     if (response.ok) {
+    //       console.log(data.message); // User created successfully
+    //     } else {
+    //       console.log("Failed to create user:", data.message);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error:", error);
+    //   }
+    // };
+    // getUsers();
   }, []);
 
   return (

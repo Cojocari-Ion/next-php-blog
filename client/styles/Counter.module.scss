@@ -6,11 +6,12 @@
     min-height: 1200px;
 
     .counter {
+        border: 1px solid #000;
         width: fit-content;
-        height: fit-content;
+        height: 250px;
         margin: 100px auto;
         border-radius: 15px;
-        background-color: #d8d8d8;
+       background-color: #d8d8d8;
         -webkit-box-shadow: 5px 5px 15px -3px rgba(0,0,0,0.4), -5px -5px 15px -3px rgba(255, 255, 255); 
         box-shadow: 5px 5px 15px -3px rgba(0,0,0,0.4), -5px -5px 15px -3px rgb(255, 255, 255);
         padding: 20px;
@@ -48,13 +49,36 @@
         
 
             &.rolling {
-                transition: 0.5s all ease-in-out;
-                transform: translateY(-100%);
+                animation-name: anim;
+                animation-duration: 0.5s;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+            }
+
+            @keyframes anim {
+                from {
+                    transform: translateY(0);
+                }
+                to {
+                    transform: translateY(-77%);
+                }
             }
 
             &.sliding {
-                transition: 0.5s all ease-in-out;
-                transform: translateY(-280px);
+                animation-name: animSlide;
+                animation-timing-function: linear;
+                animation-duration: 0.5s;
+                animation-iteration-count: infinite;
+            }
+
+            @keyframes animSlide {
+                from {
+                    transform: translateY(0);
+                }
+      
+                to {
+                    transform: translateY(-250px);
+                }
             }
         }
     }

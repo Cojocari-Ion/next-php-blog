@@ -9,8 +9,10 @@ import clsx from "clsx";
 interface Props {}
 
 const counter: React.FC<Props> = (props: Props) => {
+  const [defaultNumber, setDefaultNumber] = useState<number>(0);
   const [init, setInit] = useState<number>(0);
   const [number, setNumber] = useState<number>(0);
+  const [noValues, setNoValues] = useState<boolean>(false);
   const [counterStopped, setCounterStopped] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [roll, setRoll] = useState<boolean>(false);
@@ -21,31 +23,60 @@ const counter: React.FC<Props> = (props: Props) => {
 
   const counter: any = useRef();
 
+  useEffect(() => {
+    setDefaultNumber(111111);
+  }, []);
+
   // SET VALUES  SET VALUES  SET VALUES  SET VALUES
   useEffect(() => {
-    setInit(1699992);
-    setNumber(1699992 - 200);
+    let offset: number = 0;
+
+    if (defaultNumber <= 100) {
+      offset = 50;
+    }
+
+    if (defaultNumber > 100) {
+      offset = 100;
+    }
+
+    if (defaultNumber > 200) {
+      offset = 200;
+    }
+
+    if (defaultNumber <= 50) {
+      offset = 10;
+    }
+
+    if (defaultNumber <= 10) {
+      setInit(0);
+      setNumber(0);
+    } else {
+      setInit(defaultNumber);
+      setNumber(defaultNumber - offset);
+    }
 
     return () => {
       clearInterval(counter.current);
     };
-  }, []);
+  }, [defaultNumber]);
   // SET VALUES  SET VALUES  SET VALUES  SET VALUES
 
   // START COUNTER  START COUNTER  START COUNTER
   useEffect(() => {
-    if (loaded) {
-      counter.current = setInterval(() => {
-        setRoll(false);
-        setSlide(true);
-        setTimeout(() => {
-          setSlide(false);
-          setNumber((number) => number + 10);
-        }, 350);
-        setTimeout(() => {
-          setRoll(true);
-        }, 30);
-      }, 400);
+    if (!noValues) {
+      if (loaded) {
+        counter.current = setInterval(() => {
+          setRoll(false);
+          setSlide(true);
+          setTimeout(() => {
+            setSlide(false);
+            setNumber((number) => number + 10);
+          }, 470);
+          setTimeout(() => {
+            setRoll(true);
+          }, 30);
+        }, 500);
+      }
     }
   }, [loaded]);
   // START COUNTER  START COUNTER  START COUNTER
@@ -65,7 +96,7 @@ const counter: React.FC<Props> = (props: Props) => {
     if (init && number && !loaded) {
       setTimeout(() => {
         setLoaded(true);
-      }, 500);
+      }, 1000);
     }
   }, [init, number]);
   // END COUNTER  END COUNTER  END COUNTER
@@ -107,6 +138,7 @@ const counter: React.FC<Props> = (props: Props) => {
                   <div
                     className={clsx(
                       styles.counter__number_slide,
+                      last_first && styles.rolling,
                       last_first && roll && styles.rolling,
 
                       last_second && slide && styles.sliding,
@@ -148,7 +180,7 @@ const counter: React.FC<Props> = (props: Props) => {
                     )}
                   >
                     {last_first ? (
-                      counterStopped ? (
+                      !counterStopped ? (
                         <span>{x}</span>
                       ) : (
                         <>
@@ -162,6 +194,7 @@ const counter: React.FC<Props> = (props: Props) => {
                           <span>7</span>
                           <span>8</span>
                           <span>9</span>
+                          <span>0</span>
                         </>
                       )
                     ) : (

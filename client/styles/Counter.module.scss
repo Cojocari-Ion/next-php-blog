@@ -25,6 +25,7 @@
             flex-direction: row;
             align-items: center;
             padding: 0 100px;
+            overflow: hidden;
         }
 
         &__divider {
@@ -50,7 +51,7 @@
 
             &.rolling {
                 animation-name: anim;
-                animation-duration: 0.5s;
+                animation-duration: 0.95s;
                 animation-iteration-count: infinite;
                 animation-timing-function: linear;
             }
@@ -67,7 +68,7 @@
             &.sliding {
                 animation-name: animSlide;
                 animation-timing-function: linear;
-                animation-duration: 0.5s;
+                animation-duration: 0.95s;
                 animation-iteration-count: infinite;
             }
 

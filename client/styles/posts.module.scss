@@ -9,7 +9,54 @@
         margin-top: 30px;
     }
 
+    &__addButton {
+        width: 50px;
+        height: 50px;
+        font-size: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100px;
+        border: 2px solid #000;
+        background: none;
+        
+
+        &:hover {
+            background: #00000010;
+        }
+    }
+
+    &__addContainer {
+        @include shadedContainer;
+        width: 900px;
+        padding: 30px;
+        margin-top: 20px;
+
+        form {
+            display: flex;
+            flex-direction: column;
+
+            button {
+                @include bordered;
+                width: 200px;
+                margin-top: 20px;
+                font-weight: 700;
+                
+                &:hover {
+                    background: #00000010;
+                    
+                }
+            }
+        }
+        
+        
+        input, textarea {
+            @include bordered;
+        }
+    }
+
     &__grid{
+        margin-top: 20px;
 
         .right {
             width: 900px;
@@ -34,6 +81,22 @@
                 &__heading {
                     text-transform: uppercase;
                     font-size: 30px;
+                }
+
+                &__footer {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 7px;
+
+                    .iconHeart {
+                        color: #cfcfcf;
+
+                        &.active {
+                            button {
+                                color: #d00023;
+                            }
+                        }
+                    }
                 }
             }
         }

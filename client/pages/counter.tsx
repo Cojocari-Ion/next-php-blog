@@ -9,100 +9,84 @@ import clsx from "clsx";
 interface Props {}
 
 const counter: React.FC<Props> = (props: Props) => {
-  const [defaultNumber, setDefaultNumber] = useState<number>(0);
-  const [init, setInit] = useState<number>(0);
+  const [defaultNumber, setDefaultNumber] = useState<number>(10000);
   const [number, setNumber] = useState<number>(0);
-  const [noValues, setNoValues] = useState<boolean>(false);
-  const [counterStopped, setCounterStopped] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [roll, setRoll] = useState<boolean>(false);
   const [slide, setSlide] = useState<boolean>(false);
+  const [isCounting, setIsCounting] = useState<boolean>(false);
+  const [prevValue, setPrevValue] = useState<number>(0);
   let dividedNumber = number / 100;
   let formatedNumber = numberFormatter("# ##0.#0", dividedNumber.toFixed(2));
   let array = formatedNumber.split("");
 
   const counter: any = useRef();
+  const originalValueInterval: any = useRef(null);
 
   useEffect(() => {
-    setDefaultNumber(111111);
+    originalValueInterval.current = setInterval(() => {
+      let decidingRandom = Number(Math.random().toFixed(2));
+
+      setDefaultNumber((x) => (decidingRandom > 0.5 ? x + 5 : x));
+      console.log(decidingRandom);
+    }, Math.floor(Math.random() * 2000) + 5000);
   }, []);
 
   // SET VALUES  SET VALUES  SET VALUES  SET VALUES
+
   useEffect(() => {
-    let offset: number = 0;
+    const myInterval = setInterval(() => {
+      if (defaultNumber > 0) {
+        setIsCounting(true);
+        setLoaded(true);
+        clearInterval(myInterval);
 
-    if (defaultNumber <= 100) {
-      offset = 50;
-    }
+        let offset: number = 5;
 
-    if (defaultNumber > 100) {
-      offset = 100;
-    }
+        setNumber(defaultNumber - offset);
+      }
+    }, 20);
+  }, []);
 
-    if (defaultNumber > 200) {
-      offset = 200;
-    }
-
-    if (defaultNumber <= 50) {
-      offset = 10;
-    }
-
-    if (defaultNumber <= 10) {
-      setInit(0);
-      setNumber(0);
-    } else {
-      setInit(defaultNumber);
-      setNumber(defaultNumber - offset);
-    }
-
-    return () => {
-      clearInterval(counter.current);
-    };
-  }, [defaultNumber]);
   // SET VALUES  SET VALUES  SET VALUES  SET VALUES
 
   // START COUNTER  START COUNTER  START COUNTER
+
   useEffect(() => {
-    if (!noValues) {
-      if (loaded) {
-        counter.current = setInterval(() => {
-          setRoll(false);
-          setSlide(true);
-          setTimeout(() => {
-            setSlide(false);
-            setNumber((number) => number + 10);
-          }, 470);
-          setTimeout(() => {
-            setRoll(true);
-          }, 30);
-        }, 500);
-      }
-    }
-  }, [loaded]);
-  // START COUNTER  START COUNTER  START COUNTER
-
-  // END COUNTER  END COUNTER  END COUNTER
-  useEffect(() => {
-    let initFixed: number = Number((init / 10).toFixed());
-    let numberFixed: number = Number((number / 10).toFixed());
-
-    if (initFixed === numberFixed) {
-      clearInterval(counter.current);
-      setRoll(false);
-      setSlide(false);
-      setCounterStopped(true);
-    }
-
-    if (init && number && !loaded) {
-      setTimeout(() => {
-        setLoaded(true);
+    if (isCounting) {
+      counter.current = setInterval(() => {
+        setSlide(true);
+        setTimeout(() => {
+          setSlide(false);
+          setNumber((number) => number + 1);
+        }, 950);
       }, 1000);
     }
-  }, [init, number]);
-  // END COUNTER  END COUNTER  END COUNTER
+  }, [isCounting]);
+
+  // START COUNTER  START COUNTER  START COUNTER
+
+  // CLEAR INTERVAL START CLEAR INTERVAL START CLEAR INTERVAL START
+  useEffect(() => {
+    if (number >= defaultNumber - 2) {
+      setIsCounting(false);
+      clearInterval(counter.current);
+      console.log("stopped, I think");
+      setPrevValue(defaultNumber);
+    }
+  }, [number]);
+
+  useEffect(() => {
+    console.log(defaultNumber);
+    if (prevValue > 0) {
+      setIsCounting(true);
+      setPrevValue(0);
+    }
+  }, [defaultNumber]);
+  // CLEAR INTERVAL END CLEAR INTERVAL END CLEAR INTERVAL END
 
   return (
     <div className={styles.main}>
+      <h3>{defaultNumber}</h3>
       <div className={styles.counter}>
         <div className={styles.counter__inside}>
           <div
@@ -120,7 +104,6 @@ const counter: React.FC<Props> = (props: Props) => {
               let last_fifth: boolean = i === array.length - 6;
               let last_sixth: boolean = i === array.length - 8;
               let last_seventh: boolean = i === array.length - 9;
-              console.log(last_first);
 
               for (let i = 0; i <= 9; i++) {
                 if (x === i.toString() && i !== 9) {
@@ -138,30 +121,37 @@ const counter: React.FC<Props> = (props: Props) => {
                   <div
                     className={clsx(
                       styles.counter__number_slide,
-                      last_first && styles.rolling,
-                      last_first && roll && styles.rolling,
 
-                      last_second && slide && styles.sliding,
+                      last_first && slide && styles.sliding,
 
-                      array[array.length - 2] === "9" &&
+                      array[array.length - 1] === "9" &&
+                        last_second &&
+                        slide &&
+                        styles.sliding,
+
+                      array[array.length - 1] === "9" &&
+                        array[array.length - 2] === "9" &&
                         last_third &&
                         slide &&
                         styles.sliding,
 
-                      array[array.length - 2] === "9" &&
+                      array[array.length - 1] === "9" &&
+                        array[array.length - 2] === "9" &&
                         array[array.length - 4] === "9" &&
                         last_fourth &&
                         slide &&
                         styles.sliding,
 
-                      array[array.length - 2] === "9" &&
+                      array[array.length - 1] === "9" &&
+                        array[array.length - 2] === "9" &&
                         array[array.length - 4] === "9" &&
                         array[array.length - 5] === "9" &&
                         last_fifth &&
                         slide &&
                         styles.sliding,
 
-                      array[array.length - 2] === "9" &&
+                      array[array.length - 1] === "9" &&
+                        array[array.length - 2] === "9" &&
                         array[array.length - 4] === "9" &&
                         array[array.length - 5] === "9" &&
                         array[array.length - 6] === "9" &&
@@ -169,7 +159,8 @@ const counter: React.FC<Props> = (props: Props) => {
                         slide &&
                         styles.sliding,
 
-                      array[array.length - 2] === "9" &&
+                      array[array.length - 1] === "9" &&
+                        array[array.length - 2] === "9" &&
                         array[array.length - 4] === "9" &&
                         array[array.length - 5] === "9" &&
                         array[array.length - 6] === "9" &&
@@ -179,32 +170,10 @@ const counter: React.FC<Props> = (props: Props) => {
                         styles.sliding
                     )}
                   >
-                    {last_first ? (
-                      !counterStopped ? (
-                        <span>{x}</span>
-                      ) : (
-                        <>
-                          <span>0</span>
-                          <span>1</span>
-                          <span>2</span>
-                          <span>3</span>
-                          <span>4</span>
-                          <span>5</span>
-                          <span>6</span>
-                          <span>7</span>
-                          <span>8</span>
-                          <span>9</span>
-                          <span>0</span>
-                        </>
-                      )
-                    ) : (
-                      <>
-                        <span>{x}</span>
-                        {y !== "" && <span>{y}</span>}
-                      </>
-                    )}
-                    <span>{x}</span>
-                    {y !== "" && <span>{y}</span>}
+                    <>
+                      <span>{x}</span>
+                      {y !== "" && <span>{y}</span>}
+                    </>
                   </div>
                 </div>
               );

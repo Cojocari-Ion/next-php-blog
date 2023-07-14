@@ -51,10 +51,6 @@ const Navbar = (props: Props) => {
           </div>
         )}
 
-        <div className={styles.menu__link}>
-          <Link href={"/counter"}>Counter</Link>
-        </div>
-
         {auth.isLoggedIn() && (
           <div className={styles.menu__link}>
             <button

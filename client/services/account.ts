@@ -1,24 +1,72 @@
 import ServiceResponse from "@/interfaces/serviceResponse";
 import UserInterface from "@/interfaces/user";
 import {getAuthToken, setAuthToken, deleteAuthToken} from '../utils/cookies'
-import { use } from "react";
+import fetchDatas from './interceptors';
+
 
 let endpoint:string = process.env.NODE_ENV !== 'production' ? 'http://localhost/next-php-blog/server/controllers/' : '';
 
+const toogleFetch = (url:string, params:any) => {
+    return fetchDatas(url, params)
+}
 
-export const signUpService  = async (user:string, email:string, pass:string) => {
+export const fetchPublicUser = async (id:number) => {
+    let response:ServiceResponse = {
+        error: false,
+    }
+
+    const data = {
+        id: id
+    }
+
+    try {
+
+        const req = await fetch(endpoint +'fetchUser.php', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        })
+
+        const body = await req.json();
+
+        if(!body.user){
+            response.error = true;
+            response.message = 'Unknown error'
+            return response
+
+        } else if (body.user) {
+            response.error = false;
+            response.message = body.message
+            response.response = body.user
+        }
+
+        // response.response = body
+
+        return response
+
+    } catch(e){
+
+    }
+}
+
+export const signUpService  = async (user:string, email:string, pass:string, image?:string) => {
 
     let response:ServiceResponse = {
         error: false,
     }
 
-    const userData = {
+    const userData = image? {
+        userName: user,
+        userEmail: email,
+        userPwd: pass,
+        image: image
+    } : {
         userName: user,
         userEmail: email,
         userPwd: pass,
     }
 
     try {
+        // console.log(userData)
         const req = await fetch(endpoint + 'auth.php', {
             method: 'POST',
             headers: {
@@ -96,12 +144,12 @@ export const logInService = async (email: string, pwd: string): Promise<ServiceR
 }
 
 export const fetchProfile = async (): Promise<ServiceResponse> => {
+
     let response: ServiceResponse = {
         error: false
     }
 
     const token:string = getAuthToken();
-    console.log('token from services', token)
 
     if(!token.length) {
         response.error = true;
@@ -118,16 +166,6 @@ export const fetchProfile = async (): Promise<ServiceResponse> => {
             });
 
         const body = await request.json()
-
-        // if(body['user'] !== undefined) {
-        //     response.error = true;
-        //     response.message = body['message'];
-
-        // } else if (body['user']) {
-        //     response.error = false;
-        //     response.message = body['message']
-        //     response.response = body['user']
-        // }
 
         if(body.message){
             response.response = body.user

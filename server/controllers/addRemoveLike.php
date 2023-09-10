@@ -8,7 +8,7 @@ $conn = $db->database();
 
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 header("Access-Control-Allow-Methods: *"); // Allow the specified HTTP methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow the specified headers
+header("Access-Control-Allow-Headers: *"); // Allow the specified headers
 
 $requestHeaders = getallheaders();
 $authorizationHeader = $requestHeaders['Authorization'] ?? '';

@@ -1,11 +1,13 @@
 @import "variables";
 
 .page {
-    height: calc(100vh - 60px);
+    min-height: 800px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    padding-bottom: 50px;
+
     .container {
+        margin-top: 100px;
         width: 600px;
         padding: 30px;
         @include shadedContainer;
@@ -44,13 +46,61 @@
         }
 
         .form {
+            
             display: flex;
             flex-direction: column;
             gap: 20px;
 
             &__inputContainer {
                 display: flex;
-                flex-direction: column
+                flex-direction: column;
+                
+                
+                &.fileInput {
+                    
+                    
+                    .imageContainer {
+                        width: 200px;
+                        height: 200px;
+                        position: relative;                        
+
+                        .imgPlaceholder {
+                            width: 200px;
+                            height: 200px;
+                            
+                        }
+
+                        .tapToUpload {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            @include flexCenter;
+                        }
+
+                        .inputImg  {
+                            width: 200px;
+                            height: 200px;
+                            opacity: 0;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            cursor: pointer !important;
+                        }
+
+                        .controllers {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 110%;
+                            height: 100%;
+                            display: flex;
+                            justify-content: end;
+                            align-items: end
+                        }
+                    }
+                }
             }
 
             &__input {

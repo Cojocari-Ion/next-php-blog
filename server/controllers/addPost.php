@@ -8,7 +8,7 @@ $conn = $db->database();
 
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Allow the specified HTTP methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow the specified headers
+header("Access-Control-Allow-Headers: *"); // Allow the specified headers
 
 $requestHeaders = getallheaders();
 $authorizationHeader = $requestHeaders['Authorization'] ?? '';
@@ -32,8 +32,11 @@ if (empty($postData['title']) || empty($postData['content'])) {
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO posts (user_id, title, content, image) VALUES (?, ?, ?, ?)");
-$stmt->bind_param('ssss', $postData['userID'], $postData['title'], $postData['content'], $postData['image']);
+// Generate a timestamp in milliseconds
+$timestamp = round(microtime(true) * 1000);
+
+$stmt = $conn->prepare("INSERT INTO posts (user_id, title, content, image, topic, date) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param('sssssi', $postData['userID'], $postData['title'], $postData['content'], $postData['image'], $postData['topic'], $timestamp);
 
 if ($stmt->execute()) {
 
@@ -41,7 +44,8 @@ if ($stmt->execute()) {
         'user' => $postData['userID'],
         'title' => $postData['title'],
         'content' => $postData['content'],
-        'image' => $postData['image']
+        'image' => $postData['image'],
+        'topic' => $postData['topic'],
     ];
 
     echo json_encode(['message' => 'Post created successfully', 'post' => $post]);

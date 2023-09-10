@@ -1,4 +1,6 @@
 $smallBtn: 35px;
+$grayBg: #e3e3e3;
+$grayText: #c2c2c2;
 
 
 @mixin shadedContainer {
@@ -15,3 +17,16 @@ $smallBtn: 35px;
     padding: 10px 20px;
     font-size: 20px;
 }
+
+@mixin grayBackground {
+    background-color: #e3e3e3;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+@mixin flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

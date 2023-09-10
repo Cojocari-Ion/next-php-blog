@@ -1,0 +1,17 @@
+@import "variables";
+
+.footerButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+
+    .iconHeart {
+        color: #cfcfcf;
+
+        &.active {
+            button {
+                color: #d00023;
+            }
+        }
+    }
+}

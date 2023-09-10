@@ -7,8 +7,17 @@ import { getAuthToken, setAuthToken } from "@/utils/cookies";
 import useAuth from "@/hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import UserInterface from "@/interfaces/user";
-import { updateUserData } from "@/store/account/actions";
+import * as storageConfig from "@/utils/firebaseConfig";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { useRouter } from "next/router";
+import UserImg from "@/ui/UserImg";
+import IconButton from "@/ui/IconButton";
+import { BsTrash3Fill } from "react-icons/bs";
 
 type Props = {};
 
@@ -20,6 +29,8 @@ const Auth = (props: Props) => {
   const [msg, setMsg] = useState<string>("");
   const router = useRouter();
   const [action, setAction] = useState<"register" | "login">("register");
+  const [userImage, setImage] = useState<File | null>(null);
+  const [imagePath, setImagePath] = useState<string>("");
 
   const dispatch = useDispatch();
 
@@ -32,14 +43,12 @@ const Auth = (props: Props) => {
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registration = await signUpService(user, email, pass);
+    const registration = await signUpService(user, email, pass, imagePath);
 
     if (registration.error && registration.message) {
       setError("");
       setMsg(registration.message);
     }
-
-    console.log(registration.response);
 
     if (registration.response) {
       setAuthToken(registration.response.token);
@@ -50,7 +59,6 @@ const Auth = (props: Props) => {
         if (!token.length) {
           setMsg("Can not upload your profile");
         } else {
-          console.log("hello");
           auth.updateProfile();
         }
       }, 500);
@@ -101,14 +109,55 @@ const Auth = (props: Props) => {
   };
 
   useEffect(() => {
-    if (auth.isLoggedIn() || auth.isUpdating()) {
-      // router.push("/");
+    if (auth.isLoggedIn()) {
+      router.push("/");
     }
-  }, [auth.isLoggedIn(), auth.isUpdating()]);
+  }, [auth.isLoggedIn()]);
 
   const changeActionHandle = (arg: "register" | "login") => {
     setAction(arg);
   };
+
+  const getImageUrl = async () => {
+    if (!userImage) return;
+    const imageRef = ref(storageConfig.storage, `images/${userImage.name}`);
+
+    uploadBytes(imageRef, userImage).then(async (res) => {
+      // console.log(res.metadata.fullPath);
+      const imageRef = ref(storageConfig.storage, res.metadata.fullPath);
+      const url = await getDownloadURL(imageRef);
+      setImagePath(url);
+      // console.log(url);
+    });
+  };
+
+  const deleteImage = async (imageUrl: string) => {
+    try {
+      const imageRef = ref(storageConfig.storage, imageUrl);
+      await deleteObject(imageRef);
+      setImagePath("");
+      setImage(null);
+    } catch (error) {
+      // Handle error if necessary
+      console.error(error);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    if (imagePath) {
+      deleteImage(imagePath);
+    }
+  };
+
+  useEffect(() => {
+    getImageUrl();
+  }, [userImage]);
+
+  useEffect(() => {
+    return () => {
+      handleDeleteImage();
+    };
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -175,7 +224,7 @@ const Auth = (props: Props) => {
           </div>
 
           <div className={styles.form__inputContainer}>
-            <label htmlFor="email">Password</label>
+            <label htmlFor="password">Password</label>
             <input
               autoComplete="off"
               className={clsx(styles.form__input, styles.inputPass)}
@@ -187,6 +236,51 @@ const Auth = (props: Props) => {
               }}
             />
           </div>
+
+          {action === "register" && (
+            <div
+              className={clsx(styles.form__inputContainer, styles.fileInput)}
+            >
+              <label htmlFor="email">Image:</label>
+
+              <div className={clsx(styles.imageContainer)}>
+                <UserImg
+                  imgSrc={imagePath.length > 0 ? imagePath : ""}
+                  className={styles.imgPlaceholder}
+                />
+
+                {imagePath.length === 0 ? (
+                  <div className={styles.tapToUpload}>click to upload</div>
+                ) : null}
+
+                <input
+                  autoComplete="off"
+                  className={clsx(styles.form__input, styles.inputImg)}
+                  type="file"
+                  name="image"
+                  value={
+                    userImage !== null && userImage.hasOwnProperty("name")
+                      ? userImage.name
+                      : ""
+                  }
+                  placeholder="your password"
+                  onChange={(e) => {
+                    if (e.target.files?.length) {
+                      setImage(e.target.files[0]);
+                    }
+                  }}
+                />
+
+                {imagePath.length > 0 ? (
+                  <div className={styles.controllers}>
+                    <div onClick={handleDeleteImage}>
+                      <IconButton type={"button"} icon={<BsTrash3Fill />} />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"

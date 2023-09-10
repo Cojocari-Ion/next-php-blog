@@ -1,11 +1,16 @@
 import ServiceResponse from "@/interfaces/serviceResponse";
 import UserInterface from "@/interfaces/user";
 import {getAuthToken, setAuthToken, deleteAuthToken} from '../utils/cookies'
-import { use } from "react";
+import fetchDatas from './interceptors';
+import qs from 'query-string'
 
-let endpoint:string = process.env.NODE_ENV !== 'production' ? 'http://localhost/next-php-blog/server/controllers/' : '';
+const toogleFetch = (url:string, params:any) => {
+    return fetchDatas(url, params)
+}
 
-export const addPost = async (title: string, content: string, image: string, userID: number) => {
+
+export const addPost = async (title: string, content: string, image: string, topic: string, userID: number) => {
+    
     let response:ServiceResponse = {
         error: false,
     }
@@ -14,16 +19,14 @@ export const addPost = async (title: string, content: string, image: string, use
         title:title,
         content:content,
         image:image,
+        topic:topic,
         userID: userID
     }
 
+
     try {
-        const req = await fetch(endpoint + 'addPost.php', {
+        const req = await toogleFetch('/next-php-blog/server/controllers/addPost.php', {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
             body: JSON.stringify(post),
 
         })
@@ -54,23 +57,22 @@ export const addPost = async (title: string, content: string, image: string, use
     }
 
 }
-export const likePost = async () => {
+
+export const likePost = async (userId:string, postId:string) => {
+
     let response:ServiceResponse = {
         error: false,
     }
 
     const info = {
-        postId: "235",
-        userId: "50",
-      };
+        postId: postId,
+        userId: userId,
+    };
 
     try {
-        const req = await fetch(endpoint + 'addRemoveLike.php', {
+        const req = await toogleFetch('/next-php-blog/server/controllers/addRemoveLike.php', {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
+            
             body: JSON.stringify(info),
         })
 
@@ -89,4 +91,111 @@ export const likePost = async () => {
     }
 
 }
+
+export const commentPost = async (userId:number, postId: number, content:string) => {
+    let response:ServiceResponse = {
+        error: false,
+    }
+
+    const info = {
+        userId: userId,
+        postId: postId,
+        content: content,
+        timeStamp: Date.now()
+    };
+
+
+    try {
+        const req = await toogleFetch('/next-php-blog/server/controllers/addComent.php', {
+            method: 'POST',
+            body: JSON.stringify(info),
+        })
+
+        const body = await req.json();
+
+        response.response = body
+    
+        return response
+
+
+    } catch(error){
+        response.error = true;
+        response.message = 'unknown error'
+
+        return response
+    }
+}
+
+export const fetchPosts = async (date: number, topic: string, limit: number, offset: number) => {
+
+    let response:ServiceResponse = {
+        error: false,
+    }
+
+    try {
+
+        const query = {
+            limit,
+            offset,
+            date,
+            topic
+        }
+
+        const req = await toogleFetch(`/next-php-blog/server/controllers/getPosts.php?`+qs.stringify(query),
+            {
+                method: "GET",
+            }
+        );
+
+        const body = await req.json();
+
+        response.response = body
+    
+        return response
+
+
+    } catch(error){
+        response.error = true;
+        response.message = 'unknown error'
+
+        return response
+    }
+
+}
+
+export const fetchPost = async (id:any, ) => {
+
+    let response:ServiceResponse = {
+        error: false,
+    }
+
+    const query = {
+        postId: id,
+        
+    }
+
+    try {
+        const req = await toogleFetch(`/next-php-blog/server/controllers/fetchPost.php?`+qs.stringify(query),
+            {
+                method: "GET",
+            }
+        );
+
+        const body = await req.json();
+
+        response.response = body
+    
+        return response
+
+    } catch(error){
+        response.error = true;
+        response.message = 'unknown error'
+
+        return response
+    }
+}
+
+
+
+
 

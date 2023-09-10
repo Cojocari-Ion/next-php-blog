@@ -13,7 +13,7 @@ const Navbar = (props: Props) => {
 
   const auth = useAuth();
 
-  console.log(auth.isLoggedIn());
+  // console.log(auth.isLoggedIn());
 
   const fetchSearchResult = async () => {
     const res = await fetch(

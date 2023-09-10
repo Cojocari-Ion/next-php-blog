@@ -1,5 +1,7 @@
 @import "variables";
 
+$left_side_width: 900px;
+
 .posts {
     width: 100%;
     padding: 0 70px;
@@ -20,7 +22,6 @@
         border: 2px solid #000;
         background: none;
         
-
         &:hover {
             background: #00000010;
         }
@@ -50,7 +51,7 @@
         }
         
         
-        input, textarea {
+        input, textarea, select {
             @include bordered;
         }
     }
@@ -59,7 +60,7 @@
         margin-top: 20px;
 
         .right {
-            width: 900px;
+            width: $left_side_width;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -69,12 +70,25 @@
                 @include shadedContainer;
 
                 &__imgContainer{
+                    cursor: pointer;
                     width: 100%;
                     height: 300px;
+                    
                     img{
                         width: 100%;
                         height: 100%;
                         object-fit: cover;
+                    }
+                }
+
+                &__details {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: baseline;
+
+                    span {
+                        color: #636363;
                     }
                 }
 
@@ -83,17 +97,27 @@
                     font-size: 30px;
                 }
 
-                &__footer {
-                    display: flex;
-                    flex-direction: row;
-                    gap: 7px;
+                .footerPostComment {
+                    background-color: #eeeeee;
+                    padding: 10px;
+                    margin-top: 10px;
+                    border-radius: 10px;
+                    
+                    &__postComment {
+                        .commentForm {
+                           display: flex;
+                           flex-direction: column;
+                           gap: 10px; 
 
-                    .iconHeart {
-                        color: #cfcfcf;
+                            textarea {
+                                resize: none;
+                                padding: 10px;
+                                border-radius: 10px;
+                                max-width: 100%;
+                            }
 
-                        &.active {
-                            button {
-                                color: #d00023;
+                            .btnContainer {
+                                padding: 5px;
                             }
                         }
                     }
@@ -117,5 +141,13 @@
             border-radius: 40px;
             background: none;
         }
+    }
+
+    &__filters {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        width: $left_side_width;
     }
 }

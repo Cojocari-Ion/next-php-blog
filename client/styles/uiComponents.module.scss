@@ -1,0 +1,70 @@
+@import "variables";
+
+@mixin defaultBtnStyle {
+    padding: 8px 16px;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+
+}
+
+.button {
+    @include shadedContainer;
+    @include defaultBtnStyle;
+    -webkit-transition: 0.2s all;
+    transition: 0.2s all;
+
+    &:hover {
+        -webkit-box-shadow: -0px 0px 0px 0px #000000; 
+        box-shadow: -0px 0px 0px 0px #000000;
+        -webkit-transition: 0.2s all;
+        transition: 0.2s all;
+    }
+}
+
+.divider {
+    height: 1px;
+    background-color: #c8c8c8;
+    margin: 16px 0;
+}
+
+.userImg {
+    min-width: 30px;
+    min-height: 30px;
+    display: block;
+
+    .imageContainer {
+        width: 100%;
+        height: 100%;
+        border-radius: 100px;
+        overflow: hidden;
+        // border: 1px solid #000;
+        @include flexCenter;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        &.imgEmpty {
+            padding: 5px;
+
+            .iconContainer {
+                width: 100%;
+                height: 100%;
+                background: #c8c8c8;
+                @include flexCenter;
+                border-radius: 100px;
+
+                svg {
+                    color: #fff;
+                    width: 80%;
+                    height: 80%;
+                    // border: 1px solid #000;
+                }
+            }
+        }
+    }
+}
+

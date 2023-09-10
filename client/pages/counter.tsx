@@ -27,7 +27,6 @@ const counter: React.FC<Props> = (props: Props) => {
       let decidingRandom = Number(Math.random().toFixed(2));
 
       setDefaultNumber((x) => (decidingRandom > 0.5 ? x + 5 : x));
-      console.log(decidingRandom);
     }, Math.floor(Math.random() * 2000) + 5000);
   }, []);
 
@@ -70,13 +69,11 @@ const counter: React.FC<Props> = (props: Props) => {
     if (number >= defaultNumber - 2) {
       setIsCounting(false);
       clearInterval(counter.current);
-      console.log("stopped, I think");
       setPrevValue(defaultNumber);
     }
   }, [number]);
 
   useEffect(() => {
-    console.log(defaultNumber);
     if (prevValue > 0) {
       setIsCounting(true);
       setPrevValue(0);

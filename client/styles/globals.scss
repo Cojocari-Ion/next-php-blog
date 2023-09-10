@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 $smallBtn: 35px;
+$pageWidth1: 1920px;
+$pageWidth2: 1920px;
+$pageWidth3: 1920px;
+
 
 * {
   margin: 0;
@@ -7,6 +11,11 @@ $smallBtn: 35px;
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
 
+}
+
+#__next {
+  max-width: 1920px;
+  margin: 0 auto;
 }
 
 button {
@@ -19,6 +28,7 @@ button {
   display: flex;
   border: 2px solid #000;
   border-radius: 50px;
+  cursor: pointer;
 
   &.count {
     width: calc($smallBtn * 2);
@@ -45,4 +55,9 @@ button {
     padding: 5px;
     font-size: 18px;
   }
+}
+
+.pageSectionStandartSize {
+  max-width: $pageWidth1;
+  margin: 0 auto;
 }

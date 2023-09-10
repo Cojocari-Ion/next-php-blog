@@ -7,6 +7,7 @@ interface Props {
   count?: number;
   isCount?: boolean;
   onClick?(): void;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
 const IconButton: React.FC<Props> = ({
@@ -15,13 +16,14 @@ const IconButton: React.FC<Props> = ({
   isCount,
   count,
   onClick,
+  type,
 }) => {
   return (
     <div
       onClick={onClick}
       className={clsx("iconButton", localClassName, isCount && "count")}
     >
-      <button>{icon}</button>
+      <button type={type}>{icon}</button>
       {isCount && <div className="count">{count}</div>}
     </div>
   );

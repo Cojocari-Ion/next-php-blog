@@ -36,9 +36,15 @@ $hashedPassword = password_hash($userData['userPwd'], PASSWORD_DEFAULT);
 $token = generateToken();
 
 // Prepare the SQL statement
-$stmt = $conn->prepare("INSERT INTO users (userName, userEmail, userPwd, token) VALUES (?, ?, ?, ?)");
-$stmt->bind_param('ssss', $userData['userName'], $userData['userEmail'], $hashedPassword, $token);
-
+if (isset($userData['image'])) {
+    // With image
+    $stmt = $conn->prepare("INSERT INTO users (userName, userEmail, userPwd, token, photo) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssss', $userData['userName'], $userData['userEmail'], $hashedPassword, $token, $userData['image']);
+} else {
+    // Without image
+    $stmt = $conn->prepare("INSERT INTO users (userName, userEmail, userPwd, token) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param('ssss', $userData['userName'], $userData['userEmail'], $hashedPassword, $token);
+}
 
 // Execute the statement
 if ($stmt->execute()) {

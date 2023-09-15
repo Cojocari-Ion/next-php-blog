@@ -17,30 +17,46 @@ $topic = $_GET['topic'];
 $date = $_GET['date'];
 
 // Use prepared statements to prevent SQL injection
-$sql = "SELECT * FROM posts WHERE topic = ? AND date >= ? LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($sql);
+if ($topic === "all") {
+    // Retrieve posts from all topics
+    $sql = "SELECT * FROM posts WHERE date >= ? LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
 
-
-if ($stmt) {
-    $stmt->bind_param("siii", $topic, $date, $limit, $offset);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result) {
-        $posts = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $row['likes'] = json_decode($row['likes'], true) ?? [];
-            $row['comments'] = json_decode($row['comments'], true) ?? [];
-            $posts[] = $row;
-        }
-
-        $jsonOutput = json_encode(['posts' => $posts], JSON_PRETTY_PRINT);
-        echo $jsonOutput;
+    if ($stmt) {
+        $stmt->bind_param("iii", $date, $limit, $offset);
     } else {
-        echo json_encode(['message' => 'Failed to fetch posts']);
+        echo json_encode(['message' => 'Failed to prepare the statement']);
+        exit;
     }
-    $stmt->close();
 } else {
-    echo json_encode(['message' => 'Failed to prepare the statement']);
+    // Retrieve posts for a specific topic
+    $sql = "SELECT * FROM posts WHERE topic = ? AND date >= ? LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt) {
+        $stmt->bind_param("siii", $topic, $date, $limit, $offset);
+    } else {
+        echo json_encode(['message' => 'Failed to prepare the statement']);
+        exit;
+    }
 }
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result) {
+    $posts = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $row['likes'] = json_decode($row['likes'], true) ?? [];
+        $row['comments'] = json_decode($row['comments'], true) ?? [];
+        $posts[] = $row;
+    }
+
+    $jsonOutput = json_encode(['posts' => $posts], JSON_PRETTY_PRINT);
+    echo $jsonOutput;
+} else {
+    echo json_encode(['message' => 'Failed to fetch posts']);
+}
+
+$stmt->close();

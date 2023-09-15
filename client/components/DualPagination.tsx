@@ -38,11 +38,13 @@ const DualPagination: React.FC<Props> = ({
   );
 
   const fetchData = async () => {
+    console.log("params", params);
+
     const request = await fetchPosts(
-      defaultProps.date,
-      defaultProps.topic,
-      defaultProps.offset,
-      defaultProps.limit
+      params.date,
+      params.topic,
+      params.limit,
+      params.offset
     );
 
     const body = await request.response;
@@ -59,18 +61,14 @@ const DualPagination: React.FC<Props> = ({
     Object.keys(data).map((key: any) => {
       const value = data[key];
 
-      if (value.length) {
+      if (value) {
         currentParams[key] = value;
       } else {
         delete currentParams[key];
       }
     });
 
-    currentParams["offset"] = 0;
-
     setParams(currentParams);
-
-    // console.log("currentParams", currentParams);
   };
 
   useEffect(() => {

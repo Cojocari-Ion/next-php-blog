@@ -32,6 +32,9 @@ interface paramsProps {
 type Props = {};
 
 const Posts = (props: Props) => {
+  const auth = useAuth();
+  const allTopics = topics.topics;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [posts, setPosts] = useState<Array<any>>([]);
   const [pages, setPages] = useState<Array<number>>([]);
@@ -52,13 +55,10 @@ const Posts = (props: Props) => {
 
   const defaultProps: paramsProps = {
     date: dayjs().subtract(1, "month").unix(),
-    topic: "cats",
+    topic: allTopics[0].label,
     offset: 0,
     limit: 10,
   };
-
-  const auth = useAuth();
-  const allTopics = topics.topics;
 
   // SET INPUTS START SET INPUTS START SET INPUTS START
 
@@ -93,18 +93,15 @@ const Posts = (props: Props) => {
       setLoading(false);
       return;
     }
-    // console.log("aee");
 
     if (!postImage) return;
 
     const imageRef = ref(storageConfig.storage, `images/${postImage.name}`);
 
     uploadBytes(imageRef, postImage).then(async (res) => {
-      // console.log(res.metadata.fullPath);
       const imageRef = ref(storageConfig.storage, res.metadata.fullPath);
       const url = await getDownloadURL(imageRef);
       setImagePath(url);
-      // console.log(url);
     });
   };
 
@@ -114,7 +111,8 @@ const Posts = (props: Props) => {
       postInputs.content,
       imagePath,
       postInputs.topic,
-      auth.getUser().userId
+      auth.getUser().userId,
+      dayjs().unix()
     );
 
     if (!response.error) {
@@ -148,7 +146,7 @@ const Posts = (props: Props) => {
     <>
       <DualPagination
         defaultProps={defaultProps}
-        setRows={(data: any) => {
+        setRows={(data: Array<any>) => {
           setPosts(data);
         }}
       >
@@ -193,7 +191,6 @@ const Posts = (props: Props) => {
                         <select
                           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             setInputs(e);
-                            console.log(postInputs.topic);
                           }}
                           name="topic"
                           id=""
@@ -279,9 +276,10 @@ const Posts = (props: Props) => {
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    defaultValue={dayjs().subtract(1, "month")}
                     onChange={(e: any) => {
                       filterHandle({
-                        dateFrom: dayjs(e).format("YYYY-MM-DD"),
+                        date: dayjs(e).unix(),
                       });
                     }}
                   />
@@ -291,7 +289,7 @@ const Posts = (props: Props) => {
               <div className={styles.posts__grid}>
                 <div className={styles.right}>
                   {posts.map((x, i) => {
-                    return <Card key={"post" + i} post={x} />;
+                    return <Card key={"post" + x.id} post={x} />;
                   })}
                 </div>
                 <div className={styles.left}></div>

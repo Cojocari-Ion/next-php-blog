@@ -32,11 +32,11 @@ if (empty($postData['title']) || empty($postData['content'])) {
     exit;
 }
 
-// Generate a timestamp in milliseconds
-$timestamp = round(microtime(true) * 1000);
+echo json_encode($postData['date']);
+
 
 $stmt = $conn->prepare("INSERT INTO posts (user_id, title, content, image, topic, date) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param('sssssi', $postData['userID'], $postData['title'], $postData['content'], $postData['image'], $postData['topic'], $timestamp);
+$stmt->bind_param('sssssi', $postData['userID'], $postData['title'], $postData['content'], $postData['image'], $postData['topic'], $postData['date']);
 
 if ($stmt->execute()) {
 
@@ -46,6 +46,7 @@ if ($stmt->execute()) {
         'content' => $postData['content'],
         'image' => $postData['image'],
         'topic' => $postData['topic'],
+        'date' => $postData['date'],
     ];
 
     echo json_encode(['message' => 'Post created successfully', 'post' => $post]);

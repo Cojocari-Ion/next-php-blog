@@ -9,7 +9,7 @@ const toogleFetch = (url:string, params:any) => {
 }
 
 
-export const addPost = async (title: string, content: string, image: string, topic: string, userID: number) => {
+export const addPost = async (title: string, content: string, image: string, topic: string, userID: number, date: number) => {
     
     let response:ServiceResponse = {
         error: false,
@@ -20,7 +20,8 @@ export const addPost = async (title: string, content: string, image: string, top
         content:content,
         image:image,
         topic:topic,
-        userID: userID
+        userID: userID,
+        date: date
     }
 
 

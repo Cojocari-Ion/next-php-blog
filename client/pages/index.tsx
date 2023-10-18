@@ -4,38 +4,11 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.scss";
 import Posts from "@/components/Posts";
 import { useEffect } from "react";
-
+import clsx from "clsx";
+import PopularUsers from "@/components/PopularUsers";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  useEffect(() => {
-    // const getUsers = async () => {
-    //   try {
-    //     const email = "CUcurucu";
-    //     const password = "mucupucu";
-    //     const response = await fetch(
-    //       "http://localhost/next-php-blog/server/auth",
-    //       {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({ email, password }),
-    //       }
-    //     );
-    //     const data = await response.json();
-    //     if (response.ok) {
-    //       console.log(data.message); // User created successfully
-    //     } else {
-    //       console.log("Failed to create user:", data.message);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error:", error);
-    //   }
-    // };
-    // getUsers();
-  }, []);
-
   return (
     <div className="pageSectionStandartSize">
       <Head>
@@ -45,7 +18,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Posts />
+      <div className={clsx(styles.postsMain)}>
+        <Posts />
+        <PopularUsers />
+      </div>
     </div>
   );
 }

@@ -36,10 +36,9 @@ const DualPagination: React.FC<Props> = ({
   const prevParams = useRef<any>(
     typeof defaultProps === "object" ? defaultProps : {}
   );
+  const [resultCount, setResultCount] = useState<number>(0);
 
   const fetchData = async () => {
-    console.log("params", params);
-
     const request = await fetchPosts(
       params.date,
       params.topic,
@@ -48,9 +47,14 @@ const DualPagination: React.FC<Props> = ({
     );
 
     const body = await request.response;
+    // console.log(body);
 
     if (Array.isArray(body.posts)) {
       setRows(body.posts);
+    }
+
+    if (body.post_count > 0) {
+      setResultCount(body.post_count);
     }
   };
 
@@ -71,6 +75,15 @@ const DualPagination: React.FC<Props> = ({
     setParams(currentParams);
   };
 
+  const handlePageChange = (e: any, selectedItem: any) => {
+    let parsed: any = JSON.parse(JSON.stringify(params));
+
+    parsed["offset"] = Math.ceil((selectedItem - 1) * 10);
+    parsed["limit"] = Math.ceil(selectedItem * 10);
+
+    setParams(parsed);
+  };
+
   useEffect(() => {
     fetchData();
   }, [params]);
@@ -80,20 +93,23 @@ const DualPagination: React.FC<Props> = ({
       {children({ filterHandle })}
 
       <div>
-        <Pagination
-          count={10}
-          renderItem={(item) => (
-            <PaginationItem
-              slots={{
-                first: FirstArrow,
-                previous: PrevArrow,
-                next: NextArrow,
-                last: LastArrow,
-              }}
-              {...item}
-            />
-          )}
-        />
+        {resultCount > 10 && (
+          <Pagination
+            count={Math.ceil(resultCount / 10)}
+            onChange={handlePageChange}
+            renderItem={(item) => (
+              <PaginationItem
+                slots={{
+                  first: FirstArrow,
+                  previous: PrevArrow,
+                  next: NextArrow,
+                  last: LastArrow,
+                }}
+                {...item}
+              />
+            )}
+          />
+        )}
       </div>
     </div>
   );

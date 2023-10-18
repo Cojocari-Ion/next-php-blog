@@ -103,6 +103,19 @@
                 }
             }
 
+            &__statusMsg {
+
+                font-size: 16px;
+
+                &.successTrue {
+                    color: green
+                }
+
+                &.successFalse {
+                    color: red
+                }
+            }
+
             &__input {
                 @include bordered;
             }

@@ -32,9 +32,6 @@ if (empty($postData['title']) || empty($postData['content'])) {
     exit;
 }
 
-echo json_encode($postData['date']);
-
-
 $stmt = $conn->prepare("INSERT INTO posts (user_id, title, content, image, topic, date) VALUES (?, ?, ?, ?, ?, ?)");
 $stmt->bind_param('sssssi', $postData['userID'], $postData['title'], $postData['content'], $postData['image'], $postData['topic'], $postData['date']);
 
@@ -49,7 +46,9 @@ if ($stmt->execute()) {
         'date' => $postData['date'],
     ];
 
-    echo json_encode(['message' => 'Post created successfully', 'post' => $post]);
+    $jsonOutput = json_encode(['message' => 'Post created successfully', 'post' => $post]);
+    error_log('JSON Output: ' . $jsonOutput);
+    echo $jsonOutput;
 } else {
     echo json_encode(['message' => 'Failed to create post']);
 }

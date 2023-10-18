@@ -1,13 +1,13 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Auth.module.scss";
 import clsx from "clsx";
-import { setEmitFlags } from "typescript";
-import { signUpService, fetchProfile } from "../services/account";
+import { signUpService, logInService } from "../services/account";
 import { getAuthToken, setAuthToken } from "@/utils/cookies";
 import useAuth from "@/hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import UserInterface from "@/interfaces/user";
 import * as storageConfig from "@/utils/firebaseConfig";
+import { userIsUpdating, updateUserData } from "@/store/account/actions";
 import {
   ref,
   uploadBytes,
@@ -26,7 +26,10 @@ const Auth = (props: Props) => {
   const [pass, setPass] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [msg, setMsg] = useState<string>("");
+  const [authStatus, setAuthStatus] = useState<any>({
+    success: false,
+    message: "",
+  });
   const router = useRouter();
   const [action, setAction] = useState<"register" | "login">("register");
   const [userImage, setImage] = useState<File | null>(null);
@@ -43,11 +46,23 @@ const Auth = (props: Props) => {
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!user.length || !email.length || !pass.length) {
+      setAuthStatus({
+        success: false,
+        message: "Fill all needed inputs",
+      });
+
+      return;
+    }
+
     const registration = await signUpService(user, email, pass, imagePath);
 
     if (registration.error && registration.message) {
-      setError("");
-      setMsg(registration.message);
+      setAuthStatus({
+        success: false,
+        message: "Something went wrong",
+      });
+      // setAuthStatus(registration.message);
     }
 
     if (registration.response) {
@@ -57,7 +72,10 @@ const Auth = (props: Props) => {
         let token = getAuthToken();
 
         if (!token.length) {
-          setMsg("Can not upload your profile");
+          setAuthStatus({
+            success: true,
+            message: "Success. Redirecting...",
+          });
         } else {
           auth.updateProfile();
         }
@@ -67,14 +85,35 @@ const Auth = (props: Props) => {
 
   const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.length && pass.length) {
-      auth.logIn(email, pass);
-      setMsg("Success! Redirecting...");
+    dispatch(userIsUpdating(true));
+
+    const data = await logInService(email, pass);
+
+    console.log(data);
+
+    if (data.error) {
+      dispatch(userIsUpdating(false));
+      setAuthStatus({
+        success: false,
+        message: "Invalid credentials",
+      });
+
+      console.error(data.message);
+    }
+
+    if (!data.error && data.response) {
+      setAuthToken(data.response.token);
+      dispatch(updateUserData(data.response));
+      dispatch(userIsUpdating(false));
+
+      setAuthStatus({
+        success: true,
+        message: "Success.Redirecting...",
+      });
+
       setTimeout(() => {
         router.push("/");
       }, 1000);
-    } else {
-      console.error("fill inputs accordingly");
     }
   };
 
@@ -281,6 +320,17 @@ const Auth = (props: Props) => {
               </div>
             </div>
           )}
+
+          {authStatus.message.length ? (
+            <span
+              className={clsx(
+                styles.form__statusMsg,
+                authStatus.success ? styles.successTrue : styles.successFalse
+              )}
+            >
+              {authStatus.message}
+            </span>
+          ) : null}
 
           <button
             type="submit"

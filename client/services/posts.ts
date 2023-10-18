@@ -36,21 +36,23 @@ export const addPost = async (title: string, content: string, image: string, top
 
         if(!body.post.user){
             response.error = true;
-            response.message = 'Unknown error asd'
+            response.message = 'Unknown error'
             return response
 
         } else if (body.post.user) {
+
             response.error = false;
             response.message = body.message
             response.response = body.post
+            
         }
 
         // response.response = body
 
         return response
 
-
     } catch(error){
+        console.log('error', error)
         response.error = true;
         response.message = 'unknown error'
 

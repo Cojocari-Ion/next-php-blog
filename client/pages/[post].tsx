@@ -62,6 +62,7 @@ const Post: React.FC<Props> = ({}) => {
   return (
     <div className={clsx(styles.postPage)}>
       <div className={clsx(styles.postPage__grid)}>
+
         <div className={clsx(styles.postPage__container)}>
           {localPost ? (
             <>
@@ -144,7 +145,10 @@ const Post: React.FC<Props> = ({}) => {
           )}
         </div>
 
-        <div className={clsx(styles.postPage__sidebar)}></div>
+        <div className={clsx(styles.postPage__sidebar)}>
+          
+        </div>
+
       </div>
     </div>
   );

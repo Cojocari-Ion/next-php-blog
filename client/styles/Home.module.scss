@@ -1,0 +1,49 @@
+@import "variables";
+
+.postsMain {
+    position: relative;
+    display: flex;
+
+    .popularUsers {
+        @include shadedContainer;
+        width: 400px;
+
+        margin-top: 60px;
+        position: sticky;
+        top: 20px;
+        right: 0;
+        height: 600px;
+        padding: 30px;
+
+        h4 {
+            font-size: 30px;
+        }
+
+        &__container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        &__item {
+            display: flex;
+            padding: 10px;
+            border: 1px solid $grayBg;
+            align-items: center;
+            gap: 20px;
+
+            img {
+                object-fit: cover;
+                border-radius: 100px;
+            }
+
+            p {
+                font-size: 18px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+        }
+    }
+}

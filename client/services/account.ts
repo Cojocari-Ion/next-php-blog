@@ -181,3 +181,31 @@ export const fetchProfile = async (): Promise<ServiceResponse> => {
     }
 }
 
+export const fetchPopularUsers = async (): Promise<ServiceResponse> => {
+
+    let response: ServiceResponse = {
+        error: false
+    }
+
+    try {
+
+        const request = await fetch(endpoint + 'fetchPopularUsers.php', {
+            method: 'GET',
+        });
+
+        const body = await request.json()
+
+        if(Array.isArray(body.users)){
+            response.response = body.users
+        }
+
+        return response
+
+    } catch(error) {
+        response.error = true;
+        response.message = 'unknown error'
+
+        return response
+    }
+}
+

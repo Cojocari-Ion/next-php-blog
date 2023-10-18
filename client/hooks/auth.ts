@@ -3,6 +3,7 @@ import { getAuthToken, deleteAuthToken, setAuthToken } from "@/utils/cookies"
 import { useDispatch, useSelector } from 'react-redux'
 import {updateUserData, userIsUpdating} from '@/store/account/actions'
 import UserInterface from "@/interfaces/user";
+import { useRouter } from "next/router";
 
 
 function useAuth(){
@@ -11,7 +12,7 @@ function useAuth(){
     // @ts-ignore
     const user: UserInterface = useSelector((state):any => state.account.user);
     const dispatch = useDispatch()
-
+    const router = useRouter()
 
     const updateProfile = async () => {
 
@@ -48,16 +49,20 @@ function useAuth(){
 
         const data = await logInService(email, pwd);
 
+        console.log(data)
+
         if(data.error) {
             dispatch(userIsUpdating(false));
-            return false
+            console.error(data.message);
         }
 
         if(!data.error && data.response) {
             setAuthToken(data.response.token)
             dispatch(updateUserData(data.response))
             dispatch(userIsUpdating(false))
-            return true
+            setTimeout(() => {
+              router.push("/");
+            }, 1000);
         }
     }
 

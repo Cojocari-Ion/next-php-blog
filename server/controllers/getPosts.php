@@ -19,6 +19,7 @@ $date = $_GET['date'];
 // Use prepared statements to prevent SQL injection
 if ($topic === "all") {
     // Retrieve posts from all topics
+
     $sql = "SELECT * FROM posts WHERE date >= ? LIMIT ? OFFSET ?";
     $stmt = $conn->prepare($sql);
 
@@ -29,6 +30,7 @@ if ($topic === "all") {
         exit;
     }
 } else {
+
     // Retrieve posts for a specific topic
     $sql = "SELECT * FROM posts WHERE topic = ? AND date >= ? LIMIT ? OFFSET ?";
     $stmt = $conn->prepare($sql);
@@ -44,6 +46,13 @@ if ($topic === "all") {
 $stmt->execute();
 $result = $stmt->get_result();
 
+$sqlCount = "SELECT COUNT(*) AS post_count FROM posts";
+$stmtCount = $conn->prepare($sqlCount);
+$stmtCount->execute();
+$countResult = $stmtCount->get_result();
+$countRow = $countResult->fetch_assoc();
+$allPostsCount = $countRow['post_count'];
+
 if ($result) {
     $posts = [];
 
@@ -53,10 +62,16 @@ if ($result) {
         $posts[] = $row;
     }
 
-    $jsonOutput = json_encode(['posts' => $posts], JSON_PRETTY_PRINT);
+    $response = [
+        'post_count' => $allPostsCount,
+        'posts' => $posts,
+    ];
+
+    $jsonOutput = json_encode($response, JSON_PRETTY_PRINT);
     echo $jsonOutput;
 } else {
     echo json_encode(['message' => 'Failed to fetch posts']);
 }
 
 $stmt->close();
+$stmtCount->close();

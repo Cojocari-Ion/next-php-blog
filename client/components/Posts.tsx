@@ -21,6 +21,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { fetchPosts } from "@/services/posts";
 
 interface paramsProps {
   date: number;
@@ -34,6 +35,7 @@ type Props = {};
 const Posts = (props: Props) => {
   const auth = useAuth();
   const allTopics = topics.topics;
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [posts, setPosts] = useState<Array<any>>([]);
@@ -88,8 +90,15 @@ const Posts = (props: Props) => {
   const getImageUrl = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    if (!postInputs.title.length || !postInputs.content.length) {
-      setError({ err: true, message: "You haven't completed all fields" });
+    if (
+      !postInputs.title.length ||
+      !postInputs.content.length ||
+      (selectRef.current !== null && !selectRef.current.value.length)
+    ) {
+      setError({
+        err: true,
+        message: "You haven't completed all fields",
+      });
       setLoading(false);
       return;
     }
@@ -105,6 +114,21 @@ const Posts = (props: Props) => {
     });
   };
 
+  const fetchData = async (params: any) => {
+    const request = await fetchPosts(
+      params.date,
+      params.topic,
+      params.limit,
+      params.offset
+    );
+
+    const body = await request.response;
+
+    if (Array.isArray(body.posts)) {
+      setPosts(body.posts);
+    }
+  };
+
   const insertPost = async (imagePath: string) => {
     const response = await addPost(
       postInputs.title,
@@ -115,25 +139,33 @@ const Posts = (props: Props) => {
       dayjs().unix()
     );
 
-    if (!response.error) {
-      setError({
-        err: response.error,
-        message: response.message,
-      });
+    setPostInputs({
+      title: "",
+      content: "",
+    });
 
-      setPostInputs({
-        title: "",
-        content: "",
-      });
-      setImage(null);
-    }
+    setImage(null);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    setImage(null);
-    setImagePath("");
-    setLoading(false);
+
+    if (!response.error) {
+      setError({
+        err: false,
+        message: "You have added post successfully",
+      });
+
+      fetchData(defaultProps);
+      setImage(null);
+      setImagePath("");
+      setLoading(false);
+    } else {
+      setError({
+        err: true,
+        message: "Error",
+      });
+    }
   };
 
   useEffect(() => {
@@ -141,6 +173,12 @@ const Posts = (props: Props) => {
       insertPost(imagePath);
     }
   }, [imagePath]);
+
+  const topicsForCreation = (): Array<any> => {
+    let arr: Array<any> = allTopics.filter((i) => i.value !== "All");
+
+    return arr;
+  };
 
   return (
     <>
@@ -192,10 +230,11 @@ const Posts = (props: Props) => {
                           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             setInputs(e);
                           }}
+                          ref={selectRef}
+                          defaultValue={topicsForCreation()[0].value}
                           name="topic"
-                          id=""
                         >
-                          {allTopics?.map((x, i) => {
+                          {topicsForCreation()?.map((x, i) => {
                             return (
                               <option key={"topic" + x.id} value={x.label}>
                                 {x.value}

@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import { BiSearch } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import useAuth from "@/hooks/auth";
+import Button from "@/ui/Button";
 
 type Props = {};
 
@@ -53,13 +54,21 @@ const Navbar = (props: Props) => {
 
         {auth.isLoggedIn() && (
           <div className={styles.menu__link}>
-            <button
+            <Button
               onClick={() => {
                 auth.logOut();
               }}
+              text={"Log Out"}
+            />
+
+            {/* <button
+              onClick={() => {
+                auth.logOut();
+              }}
+              className={styles.menu__button}
             >
               Log Out
-            </button>
+            </button> */}
           </div>
         )}
       </div>
